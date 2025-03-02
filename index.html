@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mass Re-dunce-dancy</title>
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+    crossorigin="anonymous"
+  />
+  <style>
+    /* Cheesy accent color */
+    :root {
+      --cheesy-accent: #ffcc00;
+      --page-bg: #fff;
+      --page-text: #000;
+      --card-bg: #fff;
+      --card-text: #000;
+      --card-border: #ccc;
+    }
+    /* Smooth transitions for background and color changes */
+    body, .card, .card-header, .card-body, .nav-tabs, .nav-link, .btn, .modal-content {
+      transition: background-color 0.75s, color 0.75s, border-color 0.75s;
+    }
+    /* Use the CSS variable for the background color */
+    body {
+      background-color: var(--page-bg);
+      color: var(--page-text);
+    }
+    /* Cheesy text shadow for headings */
+    h1, h4, h5 {
+      text-shadow: 1px 1px 2px var(--cheesy-accent);
+    }
+    /* Card styling using CSS variables */
+    .card {
+      background-color: var(--card-bg);
+      color: var(--card-text);
+      border: 5px solid var(--card-border);
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .card-header {
+      background-color: var(--card-bg);
+      color: var(--card-text);
+      border-bottom: 1px solid var(--card-border);
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+    .card-body {
+      color: var(--card-text);
+    }
+    .nav-tabs .nav-link.active {
+      background-color: var(--card-bg);
+      color: var(--card-text);
+      border-color: var(--card-border);
+    }
+    .nav-tabs .nav-link {
+      color: var(--card-text);
+    }
+    /* Cheesy fire button */
+    .btn-fire {
+      background-color: gold;
+      color: black;
+      border: 2px solid #DAA520;
+    }
+    /* Ensure modals use our card colors for readability */
+    .modal-content {
+      background-color: var(--card-bg) !important;
+      color: var(--card-text) !important;
+      border: 4px solid var(--card-border) !important;
+    }
+    .text-firey-gold {
+      color: #ffcc00;
+      border: 2px solid #ff4800;
+      padding: 10px;
+      border-radius: 10px;
+      background: linear-gradient(45deg, #ffdd88, #ffcc00);
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+      font-family: sans-serif;
+      font-size: 1.25em;
+      transform: rotate(-1deg);
+      margin-bottom: 40px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Alert Container (for game notifications) -->
+  <div id="gameAlertContainer" style="position: fixed; top: 20px; right: 20px; z-index: 1050;"></div>
+
+  <div class="container my-4">
+    <h1 class="text-center mb-4">Mass Re-dunce-dancy</h1>
+    <div class="text-center mb-3">
+      <h4 id="globalFiringPoints">FP: 0</h4>
+      <p class="text-firey-gold">
+        The President’s new crypto – Fire Points (FP). The more people you fire, the more FP you get back. It’s like printing money! Maybe I'll fire the Federal Reserve next...
+      </p>
+    </div>
+
+    <!-- Bootstrap Tabs for Departments and Layoff Upgrades -->
+    <ul class="nav nav-tabs" id="gameTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="departments-tab" data-bs-toggle="tab" data-bs-target="#departments" type="button" role="tab" aria-controls="departments" aria-selected="true">
+          Departments
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="upgrades-tab" data-bs-toggle="tab" data-bs-target="#upgrades" type="button" role="tab" aria-controls="upgrades" aria-selected="false">
+          Layoff Upgrades
+        </button>
+      </li>
+    </ul>
+    <div class="tab-content" id="gameTabsContent">
+      <!-- Departments Tab -->
+      <div class="tab-pane fade show active" id="departments" role="tabpanel" aria-labelledby="departments-tab">
+        <div class="row mt-4" id="departmentsContainer">
+          <!-- Department cards will be generated here -->
+        </div>
+      </div>
+      <!-- Layoff Upgrades Tab -->
+      <div class="tab-pane fade" id="upgrades" role="tabpanel" aria-labelledby="upgrades-tab">
+        <div class="mt-4">
+          <!-- Manual Upgrade: Rapid Redundancy -->
+          <div class="card mb-4 mx-auto" style="max-width: 500px;">
+            <div class="card-body text-center">
+              <h5 class="card-title"><i class="fas fa-bolt"></i> Rapid Redundancy Upgrades</h5>
+              <p class="card-text">
+                Multi-Fire Level: <span id="fireMultiplierDisplay">1</span>
+              </p>
+              <p class="card-text">
+                Upgrade Cost: <span id="upgradeCostDisplay">50</span> FP
+              </p>
+              <button id="upgradeButton" class="btn btn-success">Upgrade Rapid Redundancy</button>
+            </div>
+          </div>
+          <!-- Auto-Firing Upgrade: Automated Layoffs -->
+          <div class="card mx-auto" style="max-width: 500px;">
+            <div class="card-body text-center">
+              <h5 class="card-title"><i class="fas fa-robot"></i> Automated Layoffs</h5>
+              <p class="card-text">
+                Auto-Fire Level: <span id="autoFireLevelDisplay">0</span>
+              </p>
+              <p class="card-text">
+                Upgrade Cost: <span id="autoFireCostDisplay">500</span> FP
+              </p>
+              <button id="autoUpgradeButton" class="btn btn-warning">Buy Automated Layoffs Upgrade</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Incriminating Evidence Button and Auto-Save Readout -->
+    <div class="text-center mt-4">
+      <button id="clearSaveData" class="btn btn-danger">Delete Incriminating Evidence</button>
+      <p id="autoSaveStatus" class="mt-2">Auto Save: Not yet saved</p>
+    </div>
+  </div>
+
+  <!-- Tutorial Modal (Opening Letter & How-To) -->
+  <div class="modal fade" id="tutorialModal" tabindex="-1" aria-labelledby="tutorialModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="tutorialModalLabel">Welcome to Mass Re-dunce-dancy!</h5>
+        </div>
+        <div class="modal-body">
+          <p>
+            Greetings, you unstoppable bureaucratic terminator! Welcome to the realm of Fire Points—where every person you fire earns you more cash and more chaos.
+          </p>
+          <p>
+            <strong>How to wreak havoc:</strong>
+            <ul>
+              <li>Click the <span class="badge bg-danger">Active</span> department card to fire employees.</li>
+              <li>Each firing costs FP, but don’t worry—the reward system sends cash right back to you!</li>
+              <li>Invest in <em>Rapid Redundancy Upgrades</em> to fire multiple employees at once, or opt for <em>Automated Layoffs</em> to keep the mayhem on autopilot.</li>
+              <li>If you ever find yourself in a pickle, deleting incriminating evidence resets your progress. (No judgment here!)</li>
+            </ul>
+          </p>
+          <p>
+            So, strap in, click that fire button, and let’s dismantle bureaucracy with style and a healthy dose of absurdity!
+          </p>
+          <p class="text-end"><em>- EM (Egomaniacal Maniac)</em></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="tutorialCloseButton" data-bs-dismiss="modal">Let the chaos begin!</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Modal (Custom Confirm Instead of system confirm) -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmModalLabel">Please Confirm</h5>
+        </div>
+        <div class="modal-body" id="confirmModalBody">
+          <!-- Message will be injected here -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="confirmNoButton">No</button>
+          <button type="button" class="btn btn-primary" id="confirmYesButton">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Consequence Modal (Wait for countdown before closing) -->
+  <div class="modal fade" id="clearedModal" tabindex="-1" aria-labelledby="clearedModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="clearedModalLabel">Department Cleared</h5>
+          <button type="button" class="btn-close" id="modalCloseButton" disabled data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p id="clearedModalContent"></p>
+          <div class="mt-3">
+            <small>Close button unlocked in <span id="modalCountdown"></span> seconds...</small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="modalFooterCloseButton" disabled data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Winning Letter Modal -->
+  <div class="modal fade" id="winningModal" tabindex="-1" aria-labelledby="winningModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="winningModalLabel">A Final Reset from EM</h5>
+        </div>
+        <div class="modal-body">
+          <p>
+            Bravo, you magnificent agent of chaos! You’ve eradicated every speck of bureaucratic bullshit,
+            leaving a gaping void where government once lurked. As you stand atop the rubble of dismantled departments,
+            know this: there’s no coming back from this level of glorious destruction... or is there?
+          </p>
+          <p>
+            With the colossal fortune you’ve helped me amass, I’ve built a time machine!
+            That’s right—I’ve used all this cash to travel back in time so we can do it all over again,
+            because, frankly, it’s just too damn fun.
+          </p>
+          <p id="totalFiredCount" class="text-center fw-bold"></p>
+          <p class="text-end"><em>- EM (Egomaniacal Maniac)</em></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="restartButton" data-bs-dismiss="modal">Restart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overflow Modal -->
+  <div class="modal fade" id="overflowModal" tabindex="-1" aria-labelledby="overflowModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="overflowModalLabel">Overflowing with Generosity</h5>
+        </div>
+        <div class="modal-body">
+          <p>
+            Ah, behold! You’re swimming in FP like Scrooge McDuck on steroids!
+            You’ve hit the overflow – so much FP that numbers now mean nothing.
+          </p>
+          <p>
+            As the rich billionaire who built this firing system (with the help of an unpaid intern, whom I promptly fired),
+            I’ve made enough money off your relentless sackings that I’m practically giving away upgrades for free.
+            Enjoy these gifts – my way of saying, "Go forth and fire again!" Because when you’re as filthy rich as I am,
+            even dismantling bureaucracy becomes a charitable act.
+          </p>
+          <p class="text-end"><em>- EM (e-X-tra-Genius-Generous Man)</em></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="overflowCloseButton" data-bs-dismiss="modal">Thanks, I guess</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Load MASTER_LIST -->
+  <script src="masterList.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"
+  ></script>
+  <script>
+    /* ---------- Utility Functions ---------- */
+    // Show a styled alert in a fixed container
+    function showGameAlert(message, type = 'warning') {
+      const container = document.getElementById("gameAlertContainer");
+      const alertDiv = document.createElement("div");
+      alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+      alertDiv.role = "alert";
+      alertDiv.innerHTML = message +
+        `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+      container.appendChild(alertDiv);
+      setTimeout(() => {
+        var alertInstance = new bootstrap.Alert(alertDiv);
+        alertInstance.close();
+      }, 3000);
+    }
+    
+    /* ---------- Formatting and Auto-Save ---------- */
+    const MAX_FP_DISPLAY = 1e12;
+    function formatFP(value) {
+      if (value >= MAX_FP_DISPLAY) {
+        return "It's just meaningless numbers, who cares...";
+      }
+      return value;
+    }
+    
+    function updateAutoSaveStatus() {
+      const now = new Date();
+      document.getElementById("autoSaveStatus").textContent = "Auto Save: " + now.toLocaleTimeString();
+    }
+    
+    /* ---------- Local Storage ---------- */
+    function saveProgress() {
+      const gameState = {
+        firingPointsGlobal,
+        fireMultiplier,
+        upgradeCost,
+        autoFireLevel,
+        autoFireCost,
+        floors: floors.map(f => ({
+          name: f.name,
+          employees: f.employees,
+          noteShown: f.noteShown || false,
+          fireCost: f.fireCost,
+          reward: f.reward,
+          initialEmployees: f.initialEmployees
+        })),
+        overflowModalShown: overflowModalShown
+      };
+      localStorage.setItem("massRedundancyProgress", JSON.stringify(gameState));
+      updateAutoSaveStatus();
+    }
+    
+    function loadProgress() {
+      const saved = localStorage.getItem("massRedundancyProgress");
+      if (saved) {
+        try {
+          const data = JSON.parse(saved);
+          firingPointsGlobal = data.firingPointsGlobal;
+          fireMultiplier = data.fireMultiplier;
+          upgradeCost = data.upgradeCost;
+          autoFireLevel = data.autoFireLevel;
+          autoFireCost = data.autoFireCost;
+          overflowModalShown = data.overflowModalShown === true;
+          floors.forEach(f => {
+            const savedGroup = data.floors.find(g => g.name === f.name);
+            if (savedGroup) {
+              f.employees = savedGroup.employees;
+              f.noteShown = savedGroup.noteShown;
+              f.fireCost = savedGroup.fireCost;
+              f.reward = savedGroup.reward;
+              f.initialEmployees = savedGroup.initialEmployees || f.employees;
+            }
+          });
+        } catch (e) {
+          console.error("Failed to load progress", e);
+        }
+      }
+    }
+    
+    /* ---------- Master List Flattening ---------- */
+    function flattenMasterList(masterList) {
+      let nonWhiteHouse = [];
+      if (masterList.postal) {
+        Object.keys(masterList.postal).forEach(subcat => {
+          masterList.postal[subcat].forEach(group => nonWhiteHouse.push(group));
+        });
+      }
+      const branches = ["executive", "legislative", "judicial"];
+      branches.forEach(branch => {
+        if (masterList[branch]) {
+          const subcategories = masterList[branch];
+          Object.keys(subcategories).forEach(subcat => {
+            if (branch === "executive" && subcat === "whiteHouse") return;
+            nonWhiteHouse = nonWhiteHouse.concat(subcategories[subcat]);
+          });
+        }
+      });
+      const criticalImportance = {
+        "Senate": 1,
+        "House of Representatives": 2,
+        "Supreme Court Justices": 3
+      };
+      nonWhiteHouse.sort((a, b) => {
+        function effectivePriority(group) {
+          return criticalImportance[group.name] !== undefined ?
+            1e9 + criticalImportance[group.name] : group.employees;
+        }
+        return effectivePriority(a) - effectivePriority(b);
+      });
+      let whiteHouse = [];
+      if (masterList.executive && masterList.executive.whiteHouse) {
+        let whArray = masterList.executive.whiteHouse.slice();
+        let president = whArray.shift();
+        const whOrder = {
+          "Extra: Ex-First Lady": 1,
+          "Extra: Ex-First Lady's Divorce Attorney": 2,
+          "Extra: Billionaire Asshole": 3,
+          "Office of White House Counsel": 4,
+          "Office of Digital Strategy": 5,
+          "Office of Public Engagement": 6,
+          "Office of Legislative Affairs": 7,
+          "Office of the Staff Secretary": 8,
+          "Office of Scheduling and Advance": 9,
+          "Office of Management and Administration": 10,
+          "Cabinet Secretaries": 11,
+          "Office of the Chief of Staff": 12,
+          "Office of the National Security Advisor": 13,
+          "Domestic Policy Council": 14,
+          "National Economic Council": 15,
+          "Office of Cabinet Affairs": 16,
+          "White House Office of Communications": 17,
+          "Office of Intergovernmental Affairs": 18,
+          "Office of Presidential Personnel": 19,
+          "White House Staff": 20,
+          "Office of the First Lady": 21,
+          "The Vice President": 22
+        };
+        whArray.sort((a, b) => {
+          let orderA = whOrder[a.name] || 999;
+          let orderB = whOrder[b.name] || 999;
+          return orderA - orderB;
+        });
+        whiteHouse = whArray.concat([president]);
+      }
+      return nonWhiteHouse.concat(whiteHouse);
+    }
+    
+    // Build departments array.
+    const floors = flattenMasterList(window.MASTER_LIST);
+    floors.forEach(function(dept) {
+      dept.initialEmployees = dept.employees;
+    });
+    
+    /* ---------- Assign Default Fire Cost & Reward ---------- */
+    const baseCost = 10;
+    const costMultiplier = 1.5;
+    for (let i = 0; i < floors.length; i++) {
+      if (floors[i].fireCost === null || floors[i].fireCost === undefined) {
+        floors[i].fireCost = Math.floor(baseCost * Math.pow(costMultiplier, i));
+      }
+      if (floors[i].reward === null || floors[i].reward === undefined) {
+        floors[i].reward = Math.floor(floors[i].fireCost * 1.5);
+      }
+    }
+    
+    /* ---------- Initialize Game State ---------- */
+    let firingPointsGlobal = 10;
+    let fireMultiplier = 1;
+    let upgradeCost = 50;
+    let autoFireLevel = 0;
+    let autoFireCost = 500;
+    let overflowModalShown = localStorage.getItem("overflowModalShown") === "true";
+    let modalOpen = false; // global declaration
+    
+    // Load saved progress if available.
+    loadProgress();
+    
+    /* ---------- UI Update Functions ---------- */
+    function updateGlobalPoints() {
+      document.getElementById("globalFiringPoints").textContent = "FP: " + formatFP(firingPointsGlobal);
+      saveProgress();
+      if (firingPointsGlobal >= MAX_FP_DISPLAY && !overflowModalShown) {
+        showOverflowLetter();
+        overflowModalShown = true;
+        localStorage.setItem("overflowModalShown", "true");
+      }
+    }
+    
+    function updateUpgradeDisplay() {
+      document.getElementById("fireMultiplierDisplay").textContent = fireMultiplier;
+      document.getElementById("upgradeCostDisplay").textContent = upgradeCost;
+      saveProgress();
+    }
+    
+    function updateAutoFiringDisplay() {
+      document.getElementById("autoFireLevelDisplay").textContent = autoFireLevel;
+      document.getElementById("autoFireCostDisplay").textContent = autoFireCost;
+      saveProgress();
+    }
+    
+    function updateBackground() {
+      let clearedCount = floors.filter(f => f.employees === 0).length;
+      let totalCount = floors.length;
+      let ratio = clearedCount / totalCount;
+      let brightness = Math.floor(255 * (1 - ratio));
+      document.documentElement.style.setProperty('--page-bg', `rgb(${brightness}, ${brightness}, ${brightness})`);
+      let pageText = brightness < 128 ? '#fff' : '#000';
+      document.documentElement.style.setProperty('--page-text', pageText);
+      let cardBg = brightness < 128 ? '#333' : '#fff';
+      let cardText = brightness < 128 ? '#fff' : '#000';
+      let cardBorder = brightness < 128 ? '#777' : '#ccc';
+      document.documentElement.style.setProperty('--card-bg', cardBg);
+      document.documentElement.style.setProperty('--card-text', cardText);
+      document.documentElement.style.setProperty('--card-border', cardBorder);
+    }
+    
+    function getCurrentDepartmentIndex() {
+      for (let i = 0; i < floors.length; i++) {
+        if (floors[i].employees > 0) return i;
+      }
+      return -1;
+    }
+    
+    /* ---------- Modal Functions ---------- */
+    function showClearedNote(index) {
+      let group = floors[index];
+      if (group.noteShown) return;
+      group.noteShown = true;
+      let consequence = group.consequence || "Public service is compromised; consequences are unpredictable.";
+      let content = group.notes + "<br/><br/><div class='alert alert-danger'><strong>Real-World Consequence:</strong> " + consequence + "</div>";
+      document.getElementById("clearedModalContent").innerHTML = content;
+      document.getElementById("clearedModalLabel").textContent = group.name + " Cleared!";
+      
+      let duration = 5;
+      let countdownElem = document.getElementById("modalCountdown");
+      countdownElem.textContent = duration;
+      
+      let modalCloseButton = document.getElementById("modalCloseButton");
+      let modalFooterCloseButton = document.getElementById("modalFooterCloseButton");
+      modalCloseButton.disabled = true;
+      modalFooterCloseButton.disabled = true;
+      
+      modalOpen = true;
+      
+      let countdownInterval = setInterval(function() {
+        duration--;
+        countdownElem.textContent = duration;
+        if (duration <= 0) {
+          clearInterval(countdownInterval);
+          modalCloseButton.disabled = false;
+          modalFooterCloseButton.disabled = false;
+        }
+      }, 1000);
+      
+      let modalEl = document.getElementById("clearedModal");
+      let clearedModal = new bootstrap.Modal(modalEl);
+      modalEl.addEventListener("hidden.bs.modal", function () {
+        modalOpen = false;
+      }, { once: true });
+      clearedModal.show();
+    }
+    
+    function showWinningLetter() {
+      let totalFired = floors.reduce((sum, dept) => sum + (dept.initialEmployees || 0), 0);
+      document.getElementById("totalFiredCount").textContent = "Total people fired: " + totalFired;
+      let modalEl = document.getElementById("winningModal");
+      let winningModal = new bootstrap.Modal(modalEl);
+      winningModal.show();
+    }
+    
+    function checkWin() {
+      if (getCurrentDepartmentIndex() === -1) {
+        if (modalOpen) {
+          document.getElementById("clearedModal").addEventListener("hidden.bs.modal", function () {
+            showWinningLetter();
+          }, { once: true });
+        } else {
+          setTimeout(showWinningLetter, 500);
+        }
+      }
+    }
+    
+    function showOverflowLetter() {
+      let modalEl = document.getElementById("overflowModal");
+      let overflowModal = new bootstrap.Modal(modalEl);
+      overflowModal.show();
+    }
+    
+    function showTutorial() {
+      let modalEl = document.getElementById("tutorialModal");
+      let tutorialModal = new bootstrap.Modal(modalEl, { backdrop: 'static', keyboard: false });
+      tutorialModal.show();
+      modalEl.addEventListener("hidden.bs.modal", function () {
+        localStorage.setItem("tutorialShown", "true");
+      }, { once: true });
+    }
+    
+    /* ---------- Custom Confirm Modal Function ---------- */
+    function showGameConfirm(message) {
+      return new Promise((resolve) => {
+        const modalEl = document.getElementById("confirmModal");
+        const modalBody = document.getElementById("confirmModalBody");
+        modalBody.innerHTML = message;
+        const confirmModal = new bootstrap.Modal(modalEl, { backdrop: 'static', keyboard: false });
+        modalEl.querySelector("#confirmYesButton").onclick = function() {
+          confirmModal.hide();
+          resolve(true);
+        };
+        modalEl.querySelector("#confirmNoButton").onclick = function() {
+          confirmModal.hide();
+          resolve(false);
+        };
+        confirmModal.show();
+      });
+    }
+    
+    function buildDepartments() {
+      const departmentsContainer = document.getElementById("departmentsContainer");
+      departmentsContainer.innerHTML = "";
+      const currentDepartmentIndex = getCurrentDepartmentIndex();
+      
+      if (currentDepartmentIndex === -1) {
+        checkWin();
+        return;
+      }
+      
+      const visibleCount = 5;
+      const lastVisibleIndex = Math.min(currentDepartmentIndex + visibleCount, floors.length);
+      
+      for (let index = currentDepartmentIndex; index < lastVisibleIndex; index++) {
+        let statusBadge = "";
+        let cardClass = "card h-100";
+        let buttonHTML = "";
+        let iconHTML = '<i class="fas fa-building"></i> ';
+        
+        if (index > currentDepartmentIndex) {
+          statusBadge = '<span class="badge bg-secondary">Locked</span>';
+          cardClass += " opacity-50";
+        } else if (floors[index].employees === 0) {
+          statusBadge = '<span class="badge bg-dark">Cleared</span>';
+        } else if (index === currentDepartmentIndex) {
+          statusBadge = '<span class="badge bg-danger">Active</span>';
+          buttonHTML = `<button class="btn btn-fire mt-2" id="fire-btn-${index}"><i class="fas fa-fire"></i> Sack ${fireMultiplier} Employee${fireMultiplier > 1 ? "s" : ""}</button>`;
+        }
+        let colDiv = document.createElement("div");
+        colDiv.className = "col-md-4 col-sm-6";
+        colDiv.innerHTML = `
+          <div class="${cardClass} mb-4">
+            <div class="card-header text-center">
+              ${iconHTML}${floors[index].name} ${statusBadge}
+            </div>
+            <div class="card-body text-center">
+              <h5 class="card-title">Employees Remaining: <span id="dept-${index}-employees">${floors[index].employees}</span></h5>
+              <p class="card-text">Fire Cost: ${floors[index].fireCost} | Reward: ${floors[index].reward}</p>
+              ${buttonHTML}
+            </div>
+          </div>
+        `;
+        departmentsContainer.appendChild(colDiv);
+      }
+      
+      if (lastVisibleIndex < floors.length) {
+        let mysteryCol = document.createElement("div");
+        mysteryCol.className = "col-md-4 col-sm-6";
+        mysteryCol.innerHTML = `
+          <div class="card mb-4">
+            <div class="card-header text-center">
+              <i class="fas fa-question"></i> Mystery Department <span class="badge bg-secondary">Locked</span>
+            </div>
+            <div class="card-body text-center">
+              <h5 class="card-title">???</h5>
+              <p class="card-text">Details hidden until you progress further.</p>
+            </div>
+          </div>
+        `;
+        departmentsContainer.appendChild(mysteryCol);
+      }
+      saveProgress();
+      updateBackground();
+      checkWin();
+    }
+    
+    /* ---------- Initial Render and Event Listeners ---------- */
+    buildDepartments();
+    updateGlobalPoints();
+    updateUpgradeDisplay();
+    updateAutoFiringDisplay();
+    
+    // Force the tutorial modal on first load if not previously closed.
+    if (!localStorage.getItem("tutorialShown")) {
+      showTutorial();
+    }
+    
+    document.addEventListener("click", function (e) {
+      if (e.target && e.target.id.startsWith("fire-btn-")) {
+        const index = parseInt(e.target.id.replace("fire-btn-", ""));
+        const currentDepartmentIndex = getCurrentDepartmentIndex();
+        if (index === currentDepartmentIndex && floors[index].employees > 0) {
+          const available = floors[index].employees;
+          const amountToFire = Math.min(fireMultiplier, available);
+          const totalCost = floors[index].fireCost * amountToFire;
+          const totalReward = floors[index].reward * amountToFire;
+          if (firingPointsGlobal >= totalCost) {
+            firingPointsGlobal -= totalCost;
+            floors[index].employees -= amountToFire;
+            firingPointsGlobal += totalReward;
+            updateGlobalPoints();
+            buildDepartments();
+            if (floors[index].employees === 0) {
+              showClearedNote(index);
+            }
+          } else {
+            showGameAlert("Not enough FP to sack!", "warning");
+          }
+        }
+      }
+    });
+    
+    document.getElementById("upgradeButton").addEventListener("click", function () {
+      const currentDepartmentIndex = getCurrentDepartmentIndex();
+      let effectiveUpgradeCost = upgradeCost;
+      if (firingPointsGlobal >= MAX_FP_DISPLAY) {
+        effectiveUpgradeCost = 0;
+      }
+      if (effectiveUpgradeCost > 0 && currentDepartmentIndex !== -1 && firingPointsGlobal - effectiveUpgradeCost < floors[currentDepartmentIndex].fireCost) {
+        showGameAlert("You would go bankrupt, dummy!", "danger");
+        return;
+      }
+      if (effectiveUpgradeCost === 0 || firingPointsGlobal >= effectiveUpgradeCost) {
+        if (effectiveUpgradeCost > 0) {
+          firingPointsGlobal -= effectiveUpgradeCost;
+          upgradeCost = Math.floor(upgradeCost * 1.5);
+        } else {
+          upgradeCost = 0;
+        }
+        fireMultiplier++;
+        updateGlobalPoints();
+        updateUpgradeDisplay();
+        buildDepartments();
+      } else {
+        showGameAlert("Not enough FP to upgrade Rapid Redundancy!", "warning");
+      }
+    });
+    
+    document.getElementById("autoUpgradeButton").addEventListener("click", function () {
+      const currentDepartmentIndex = getCurrentDepartmentIndex();
+      let effectiveAutoFireCost = autoFireCost;
+      if (firingPointsGlobal >= MAX_FP_DISPLAY) {
+        effectiveAutoFireCost = 0;
+      }
+      if (effectiveAutoFireCost > 0 && currentDepartmentIndex !== -1 && firingPointsGlobal - effectiveAutoFireCost < floors[currentDepartmentIndex].fireCost) {
+        showGameAlert("You would go bankrupt, dummy!", "danger");
+        return;
+      }
+      if (effectiveAutoFireCost === 0 || firingPointsGlobal >= effectiveAutoFireCost) {
+        if (effectiveAutoFireCost > 0) {
+          firingPointsGlobal -= effectiveAutoFireCost;
+          autoFireCost = Math.floor(autoFireCost * 1.5);
+        } else {
+          autoFireCost = 0;
+        }
+        autoFireLevel++;
+        updateGlobalPoints();
+        updateAutoFiringDisplay();
+      } else {
+        showGameAlert("Not enough FP for Automated Layoffs upgrade!", "warning");
+      }
+    });
+    
+    function autoFireEvent() {
+      if (modalOpen) return;
+      if (autoFireLevel > 0) {
+        const currentDepartmentIndex = getCurrentDepartmentIndex();
+        if (currentDepartmentIndex !== -1) {
+          const dept = floors[currentDepartmentIndex];
+          if (dept.employees > 0) {
+            const autoCount = Math.min(autoFireLevel, dept.employees);
+            const totalReward = dept.reward * autoCount;
+            dept.employees -= autoCount;
+            firingPointsGlobal += totalReward;
+            updateGlobalPoints();
+            buildDepartments();
+            if (dept.employees === 0) {
+              showClearedNote(currentDepartmentIndex);
+            }
+          }
+        }
+      }
+    }
+    
+    setInterval(autoFireEvent, 5000);
+    
+    document.getElementById("clearSaveData").addEventListener("click", function () {
+      showGameConfirm("Are you sure you want to delete incriminating evidence? This cannot be undone, and YES... this does mean your game save data.")
+      .then(result => {
+        if (result) {
+          localStorage.removeItem("massRedundancyProgress");
+          localStorage.removeItem("overflowModalShown");
+          localStorage.removeItem("tutorialShown");
+          location.reload();
+        }
+      });
+    });
+    
+    document.getElementById("restartButton").addEventListener("click", function () {
+      localStorage.removeItem("massRedundancyProgress");
+      localStorage.removeItem("overflowModalShown");
+      location.reload();
+    });
+  </script>
+</body>
+</html>
