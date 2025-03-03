@@ -4,6 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Mass Re-dunce-dancy</title>
+  <!-- Favicon and android/apple icons -->
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="manifest" href="site.webmanifest" />
   <!-- FontAwesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link
@@ -85,21 +92,83 @@
       transform: rotate(-1deg);
       margin-bottom: 40px;
     }
+    .future-scope {
+      margin-top: 20px;
+      margin-bottom: 20px;
+      margin-left: auto;
+      margin-right: auto;
+      width: 100%;
+      max-width: 350px;
+      height: 350px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.1) 5%, rgba(0, 0, 0, 0.9) 90%);
+      border-radius: 30px;
+    }
+    .future-scope img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      border-radius: 30px;
+      position: relative;
+      z-index: 2;
+    }
+    .future-scope::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        rgba(255, 255, 255, 0.2) 0px, /* Increased opacity */
+        transparent 5px,
+        transparent 10px
+      );
+      animation: static-glitch 0.5s linear infinite;
+      opacity: 0.5; /* Increased opacity */
+      pointer-events: none;
+      z-index: 3;
+    }
+    .future-scope::after {
+      content: '';
+      position: absolute;
+      width: 110%;
+      height: 110%;
+      border-radius: 30px;
+      background: radial-gradient(ellipse, rgba(0, 255, 255, 0.2) 10%, transparent 60%); /* Increased opacity */
+      animation: flicker 1.5s infinite alternate;
+      pointer-events: none;
+      z-index: 4;
+    }
+    @keyframes flicker {
+      0% { opacity: 0.8; } /* Increased opacity */
+      100% { opacity: 0.4; } /* Increased opacity */
+    }
+    @keyframes static-glitch {
+      0% { background-position: 0 0; }
+      100% { background-position: 0 20px; }
+    }
   </style>
 </head>
 <body>
   <!-- Alert Container (for game notifications) -->
   <div id="gameAlertContainer" style="position: fixed; top: 20px; right: 20px; z-index: 1050;"></div>
-
   <div class="container my-4">
-    <h1 class="text-center mb-4">Mass Re-dunce-dancy</h1>
+    <h1 class="text-center mb-4">
+      <img src="MR_logo.png" alt="Mass Re-dunce-dancy Logo" style="height: 50px; vertical-align: middle; margin-right: 10px;">
+      Mass Re-dunce-dancy
+    </h1>
     <div class="text-center mb-3">
       <h4 id="globalFiringPoints">FP: 0</h4>
       <p class="text-firey-gold">
         The President’s new crypto – Fire Points (FP). The more people you fire, the more FP you get back. It’s like printing money! Maybe I'll fire the Federal Reserve next...
       </p>
     </div>
-
     <!-- Bootstrap Tabs for Departments and Layoff Upgrades -->
     <ul class="nav nav-tabs" id="gameTabs" role="tablist">
       <li class="nav-item" role="presentation">
@@ -110,6 +179,11 @@
       <li class="nav-item" role="presentation">
         <button class="nav-link" id="upgrades-tab" data-bs-toggle="tab" data-bs-target="#upgrades" type="button" role="tab" aria-controls="upgrades" aria-selected="false">
           Layoff Upgrades
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="about-tab" data-bs-toggle="tab" data-bs-target="#about" type="button" role="tab" aria-controls="about" aria-selected="false">
+          About
         </button>
       </li>
     </ul>
@@ -151,16 +225,36 @@
           </div>
         </div>
       </div>
+      <!-- About Tab -->
+      <div class="tab-pane fade" id="about" role="tabpanel" aria-labelledby="about-tab">
+        <div class="text-center mt-4">
+          <h4>About Mass Re-dunce-dancy</h4>
+          <p>
+            Mass Re-dunce-dancy is a satirical game that lets you fire employees from various government departments.
+            The more people you fire, the more Fire Points (FP) you earn. Spend FP on upgrades to fire more employees at once or automate the process.
+          </p>
+          <p>
+            The game is a parody of bureaucracy and the absurdity of firing people to earn rewards. Enjoy the chaos!
+          </p>
+          <p>
+            <strong>Source Code:</strong> <a href="https://github.com/mass-reduncedancy/mass_reduncedancy" target="_blank">GitHub</a>
+          </p>
+          <div class="alert alert-danger">
+            <strong>Disclaimer:</strong> This game is purely fictional and intended for entertainment purposes only. No real employees were harmed in the making of this game... at least by the maker of this game.
+          </div>
+          <hr>
+          <!-- Version info-->
+          <p class="text-end">Version 1.0.0</p>
+        </div>
+      </div>
     </div>
-
     <!-- Delete Incriminating Evidence Button and Auto-Save Readout -->
     <div class="text-center mt-4">
       <button id="clearSaveData" class="btn btn-danger">Delete Incriminating Evidence</button>
       <p id="autoSaveStatus" class="mt-2">Auto Save: Not yet saved</p>
     </div>
   </div>
-
-  <!-- Tutorial Modal (Opening Letter & How-To) -->
+  <!-- Tutorial Modal -->
   <div class="modal fade" id="tutorialModal" tabindex="-1" aria-labelledby="tutorialModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -191,8 +285,7 @@
       </div>
     </div>
   </div>
-
-  <!-- Confirm Modal (Custom Confirm Instead of system confirm) -->
+  <!-- Confirm Modal -->
   <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -200,7 +293,6 @@
           <h5 class="modal-title" id="confirmModalLabel">Please Confirm</h5>
         </div>
         <div class="modal-body" id="confirmModalBody">
-          <!-- Message will be injected here -->
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" id="confirmNoButton">No</button>
@@ -209,8 +301,7 @@
       </div>
     </div>
   </div>
-
-  <!-- Consequence Modal (Wait for countdown before closing) -->
+  <!-- Cleared Modal -->
   <div class="modal fade" id="clearedModal" tabindex="-1" aria-labelledby="clearedModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -230,8 +321,7 @@
       </div>
     </div>
   </div>
-
-  <!-- Winning Letter Modal -->
+  <!-- Winning Modal -->
   <div class="modal fade" id="winningModal" tabindex="-1" aria-labelledby="winningModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -258,7 +348,6 @@
       </div>
     </div>
   </div>
-
   <!-- Overflow Modal -->
   <div class="modal fade" id="overflowModal" tabindex="-1" aria-labelledby="overflowModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
@@ -277,7 +366,7 @@
             Enjoy these gifts – my way of saying, "Go forth and fire again!" Because when you’re as filthy rich as I am,
             even dismantling bureaucracy becomes a charitable act.
           </p>
-          <p class="text-end"><em>- EM (e-X-tra-Genius-Generous Man)</em></p>
+          <p class="text-end"><em>- EM (e-X-tra-Genius-Generous Maniac)</em></p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" id="overflowCloseButton" data-bs-dismiss="modal">Thanks, I guess</button>
@@ -295,7 +384,6 @@
   ></script>
   <script>
     /* ---------- Utility Functions ---------- */
-    // Show a styled alert in a fixed container
     function showGameAlert(message, type = 'warning') {
       const container = document.getElementById("gameAlertContainer");
       const alertDiv = document.createElement("div");
@@ -310,7 +398,7 @@
       }, 3000);
     }
     
-    /* ---------- Formatting and Auto-Save ---------- */
+    /* ---------- Formatting and Auto-Save Readout ---------- */
     const MAX_FP_DISPLAY = 1e12;
     function formatFP(value) {
       if (value >= MAX_FP_DISPLAY) {
@@ -441,13 +529,11 @@
       return nonWhiteHouse.concat(whiteHouse);
     }
     
-    // Build departments array.
     const floors = flattenMasterList(window.MASTER_LIST);
     floors.forEach(function(dept) {
       dept.initialEmployees = dept.employees;
     });
     
-    /* ---------- Assign Default Fire Cost & Reward ---------- */
     const baseCost = 10;
     const costMultiplier = 1.5;
     for (let i = 0; i < floors.length; i++) {
@@ -459,22 +545,18 @@
       }
     }
     
-    /* ---------- Initialize Game State ---------- */
     let firingPointsGlobal = 10;
     let fireMultiplier = 1;
     let upgradeCost = 50;
     let autoFireLevel = 0;
     let autoFireCost = 500;
     let overflowModalShown = localStorage.getItem("overflowModalShown") === "true";
-    let modalOpen = false; // global declaration
+    let modalOpen = false;
     
-    // Load saved progress if available.
     loadProgress();
     
-    /* ---------- UI Update Functions ---------- */
     function updateGlobalPoints() {
       document.getElementById("globalFiringPoints").textContent = "FP: " + formatFP(firingPointsGlobal);
-      saveProgress();
       if (firingPointsGlobal >= MAX_FP_DISPLAY && !overflowModalShown) {
         showOverflowLetter();
         overflowModalShown = true;
@@ -485,13 +567,11 @@
     function updateUpgradeDisplay() {
       document.getElementById("fireMultiplierDisplay").textContent = fireMultiplier;
       document.getElementById("upgradeCostDisplay").textContent = upgradeCost;
-      saveProgress();
     }
     
     function updateAutoFiringDisplay() {
       document.getElementById("autoFireLevelDisplay").textContent = autoFireLevel;
       document.getElementById("autoFireCostDisplay").textContent = autoFireCost;
-      saveProgress();
     }
     
     function updateBackground() {
@@ -517,17 +597,17 @@
       return -1;
     }
     
-    /* ---------- Modal Functions ---------- */
     function showClearedNote(index) {
       let group = floors[index];
       if (group.noteShown) return;
       group.noteShown = true;
       let consequence = group.consequence || "Public service is compromised; consequences are unpredictable.";
-      let content = group.notes + "<br/><br/><div class='alert alert-danger'><strong>Real-World Consequence:</strong> " + consequence + "</div>";
+      let image = group.image == null || NaN ? "MR_logo.png" : "./gpt-glimpse-images/" + group.image;
+      let content = group.notes + "<br/><br/><div class='alert alert-danger'><strong>Real-World Consequence:</strong> " + consequence + "</div><br /><h6>AI Powered 'Future-Scope'</h6><div class='future-scope'><img src='" + image + "' class='img-fluid rounded' alt='" + group.name + "' /></div>";
       document.getElementById("clearedModalContent").innerHTML = content;
       document.getElementById("clearedModalLabel").textContent = group.name + " Cleared!";
       
-      let duration = 5;
+      let duration = 1;
       let countdownElem = document.getElementById("modalCountdown");
       countdownElem.textContent = duration;
       
@@ -552,6 +632,9 @@
       let clearedModal = new bootstrap.Modal(modalEl);
       modalEl.addEventListener("hidden.bs.modal", function () {
         modalOpen = false;
+        // Save progress only when the clear modal is closed.
+        saveProgress();
+        checkWin();
       }, { once: true });
       clearedModal.show();
     }
@@ -591,7 +674,6 @@
       }, { once: true });
     }
     
-    /* ---------- Custom Confirm Modal Function ---------- */
     function showGameConfirm(message) {
       return new Promise((resolve) => {
         const modalEl = document.getElementById("confirmModal");
@@ -616,7 +698,7 @@
       const currentDepartmentIndex = getCurrentDepartmentIndex();
       
       if (currentDepartmentIndex === -1) {
-        checkWin();
+        if (!modalOpen) { checkWin(); }
         return;
       }
       
@@ -671,20 +753,9 @@
         `;
         departmentsContainer.appendChild(mysteryCol);
       }
-      saveProgress();
+      
       updateBackground();
-      checkWin();
-    }
-    
-    /* ---------- Initial Render and Event Listeners ---------- */
-    buildDepartments();
-    updateGlobalPoints();
-    updateUpgradeDisplay();
-    updateAutoFiringDisplay();
-    
-    // Force the tutorial modal on first load if not previously closed.
-    if (!localStorage.getItem("tutorialShown")) {
-      showTutorial();
+      if (!modalOpen) { checkWin(); }
     }
     
     document.addEventListener("click", function (e) {
@@ -785,6 +856,7 @@
     }
     
     setInterval(autoFireEvent, 5000);
+    setInterval(saveProgress, 10000);
     
     document.getElementById("clearSaveData").addEventListener("click", function () {
       showGameConfirm("Are you sure you want to delete incriminating evidence? This cannot be undone, and YES... this does mean your game save data.")
@@ -803,6 +875,15 @@
       localStorage.removeItem("overflowModalShown");
       location.reload();
     });
+    
+    if (!localStorage.getItem("tutorialShown")) {
+      showTutorial();
+    }
+    
+    buildDepartments();
+    updateGlobalPoints();
+    updateUpgradeDisplay();
+    updateAutoFiringDisplay();
   </script>
 </body>
 </html>
